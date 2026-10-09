@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>VibeReading · 读懂代码之间的联系</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/" aria-label="VibeReading 首页"><span class="brand-icon" aria-hidden="true">v<span>r</span></span><span>Vibe<span class="brand-light">Reading</span><small>看见代码的联系</small></span></a>
+    <div class="header-description">独立阅读 · 多语言 · 本地运行</div>
+    <div id="watch-status" class="watch-status" role="status"><span class="status-dot"></span><span id="watch-text">正在连接</span></div>
+  </header>
+
+  <section class="project-bar" aria-label="项目选择">
+    <div class="project-label"><span class="eyebrow">正在阅读</span><strong id="project-name">加载项目…</strong></div>
+    <form id="project-form" class="path-form">
+      <label class="sr-only" for="project-path">项目文件夹路径</label>
+      <input id="project-path" type="text" placeholder="输入要阅读的本地项目文件夹路径" autocomplete="off" spellcheck="false">
+      <button class="button secondary" id="pick-directory" type="button" title="使用系统对话框选择项目文件夹">选择文件夹</button>
+      <button class="button primary" id="open-project" type="submit">读取项目 <span aria-hidden="true">↗</span></button>
+    </form>
+  </section>
+
+  <div id="notice" class="notice" role="status" hidden><span id="notice-text"></span><button id="dismiss-notice" aria-label="关闭提示" type="button">×</button></div>
+  <main class="workspace">
+    <aside class="structure-panel panel" aria-label="代码结构">
+      <div class="panel-heading"><h1>代码目录</h1><span id="file-count" class="count">0</span></div>
+      <div class="structure-controls">
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索函数、文件、注释" aria-label="搜索函数、文件、注释"></label>
+        <label class="language-select"><span>语言</span><select id="language-filter" aria-label="按编程语言筛选"><option value="">全部语言</option></select></label>
+        <div id="active-tag" class="active-tag" hidden><span id="active-tag-text"></span><button id="clear-tag" aria-label="清除类或模块标签筛选" type="button">×</button></div>
+      </div>
+      <div class="tree-caption"><span id="tree-caption">项目 → 文件 → 函数</span><span id="visible-count"></span></div>
+      <div id="file-tree" class="file-tree" aria-label="文件及函数"></div>
+      <div class="structure-foot"><span class="little-square" aria-hidden="true"></span>点击类 / 模块标签，聚焦相关函数</div>
+    </aside>
+
+    <section class="graph-panel panel" aria-label="函数关系图">
+      <div class="graph-heading"><div><span class="eyebrow">CALL MAP</span><h2>函数关系图</h2></div><button id="refresh" class="icon-button" aria-label="刷新项目视图" title="刷新项目视图" type="button">↻</button></div>
+      <div class="graph-toolbar">
+        <div class="segmented" aria-label="关系图范围"><button id="scope-all" class="active" type="button" aria-pressed="true">项目视图</button><button id="scope-focus" type="button" aria-pressed="false">当前函数与上下游</button></div>
+        <div class="zoom-controls"><button id="zoom-out" type="button" aria-label="缩小关系图">−</button><button id="zoom-reset" type="button" title="恢复图形大小">100%</button><button id="zoom-in" type="button" aria-label="放大关系图">+</button></div>
+      </div>
+      <div class="graph-legend"><span><i class="line-sample"></i>静态已解析</span><span><i class="line-sample dashed"></i>候选关系</span><span class="legend-note">箭头：调用者 → 被调用者</span></div>
+      <div id="graph-viewport" class="graph-viewport" tabindex="0" aria-label="可滚动函数关系图"><div id="graph-empty" class="empty-state">正在读取代码结构…</div><svg id="call-graph" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="按文件分组的函数调用关系图"></svg></div>
+      <div class="graph-foot"><span id="graph-summary">等待代码解析</span><span>静态关系不等于运行证明</span></div>
+    </section>
+
+    <aside class="inspector-panel panel" aria-label="函数详情与用途说明">
+      <div id="inspector-empty" class="empty-state"><span class="empty-symbol">↗</span><strong>从一个函数开始</strong><p>点击目录或关系图中的函数，查看源码、调用关系和用途说明。</p></div>
+      <div id="inspector" hidden>
+        <div class="inspector-heading"><span class="eyebrow">FUNCTION DETAIL</span><h2 id="function-name"></h2><div id="function-location" class="function-location"></div><div id="function-tags" class="function-tags"></div></div>
+        <div id="node-warning" class="node-warning" role="status" hidden></div>
+        <div class="inspector-tabs" role="tablist" aria-label="函数详情"><button id="tab-source" role="tab" aria-controls="source-panel" aria-selected="true" class="active" type="button">源码与联系</button><button id="tab-annotation" role="tab" aria-controls="annotation-panel" aria-selected="false" type="button">用途说明 <span id="dirty-dot" hidden>●</span></button></div>
+        <section id="source-panel" class="inspector-content" role="tabpanel" aria-labelledby="tab-source">
+          <div class="section-label"><h3>源代码</h3><span id="source-lines"></span></div>
+          <div id="source-code" class="source-code" tabindex="0" aria-label="带行号的函数源代码"></div>
+          <div class="section-label"><h3>它调用了谁</h3><span id="outgoing-count" class="count"></span></div><div id="outgoing-list" class="relation-list"></div>
+          <div class="section-label"><h3>谁调用了它</h3><span id="incoming-count" class="count"></span></div><div id="incoming-list" class="relation-list"></div>
+          <div class="section-label"><h3>尚未解析的调用</h3><span id="unresolved-count" class="count"></span></div><div id="unresolved-list" class="relation-list"></div>
+        </section>
+        <section id="annotation-panel" class="inspector-content" role="tabpanel" aria-labelledby="tab-annotation" hidden>
+          <details class="source-doc" open><summary>源码中的注释 <span>直接提取</span></summary><pre id="extracted-doc"></pre></details>
+          <div class="annotation-heading"><h3>结构化用途说明</h3><span id="annotation-status" class="annotation-status">未添加</span></div>
+          <p class="helper">说明与源文件分开保存。人工确认只适用于当前代码版本。</p>
+          <div id="annotation-conflict" class="conflict-box" hidden><p id="conflict-text"></p><button id="rebase-draft" class="button secondary" type="button">保留文字，关联当前版本</button><button id="reload-annotation" class="text-button" type="button">重新载入已保存说明</button></div>
+          <form id="annotation-form">
+            <label class="field-label" for="note-summary">用途 <span>这个函数解决什么问题？</span></label><textarea id="note-summary" name="summary" rows="3" placeholder="例如：计算相邻轨迹点的距离，供后续速度计算使用。"></textarea>
+            <label class="field-label" for="note-inputs">输入 <span>数据、参数、单位</span></label><textarea id="note-inputs" name="inputs" rows="2" placeholder="记录输入格式、单位与前置条件。"></textarea>
+            <label class="field-label" for="note-outputs">输出 <span>结果、返回值、副作用</span></label><textarea id="note-outputs" name="outputs" rows="2" placeholder="记录返回什么，是否写文件或改变状态。"></textarea>
+            <label class="field-label" for="note-notes">注意事项 <span>边界、疑问、审核依据</span></label><textarea id="note-notes" name="notes" rows="3" placeholder="记录需要核查的假设、异常处理或与其他函数的关系。"></textarea>
+            <label class="origin-field" for="note-origin">说明来源<select id="note-origin" name="origin"><option value="manual">人工添加 / 编辑</option><option value="ai">AI 提供</option></select></label>
+            <div class="annotation-actions"><button id="save-draft" class="button secondary" type="submit">保存草稿</button><button id="approve-annotation" class="button primary" type="button">人工确认此版本</button></div>
+            <p id="annotation-meta" class="helper annotation-meta"></p>
+          </form>
+        </section>
+      </div>
+      <div class="annotation-tools"><button id="import-annotations" type="button" class="text-button">导入 AI 草稿</button><span>·</span><button id="export-annotations" type="button" class="text-button">导出说明</button><input id="import-file" type="file" accept=".json,application/json" hidden></div>
+    </aside>
+  </main>
+  <footer class="app-footer"><span id="project-stats">文件保存后自动刷新 · 仅读取源代码</span><button id="diagnostics-toggle" class="text-button" type="button" aria-expanded="false">解析提示 <span id="diagnostic-count">0</span></button></footer>
+  <section id="diagnostics-panel" class="diagnostics-panel" aria-label="解析提示" hidden><div class="section-label"><h3>解析提示与边界</h3><button id="close-diagnostics" class="icon-button" aria-label="关闭解析提示" type="button">×</button></div><div id="diagnostics-list"></div></section>
+</body>
+</html>

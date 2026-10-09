@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "project_root": "polyglot",
+  "validation_status": "not_run",
+  "description": "用于人工或自动核对的预期清单，不是测试通过记录。内部调用按不同的函数对计数，不按调用次数计数。",
+  "expected_function_count": 27,
+  "expected_distinct_internal_call_pairs": 18,
+  "languages": [
+    {
+      "language": "Python",
+      "functions": [
+        {"file": "python/geometry.py", "qualified_name": "norm"},
+        {"file": "python/labels.py", "qualified_name": "norm"},
+        {"file": "python/main.py", "qualified_name": "analyse_point"}
+      ],
+      "calls": [
+        {"from_file": "python/main.py", "from": "analyse_point", "to_file": "python/geometry.py", "to": "norm", "expression": "norm(x, y)", "allowed_statuses": ["candidate", "resolved"]},
+        {"from_file": "python/main.py", "from": "analyse_point", "to_file": "python/labels.py", "to": "norm", "expression": "label_norm(label)", "allowed_statuses": ["candidate", "resolved"]}
+      ],
+      "notes": "两个 norm 不应合并。以 polyglot 为扫描根时，同目录脚本导入可能标成 candidate；以 python 为扫描根时可以明确解析。str.strip/str.lower 等外部或动态属性调用不属于本清单的内部边。"
+    },
+    {
+      "language": "R",
+      "functions": [
+        {"file": "r/measurements.R", "qualified_name": "scale_value"},
+        {"file": "r/measurements.R", "qualified_name": "total_scaled"},
+        {"file": "r/measurements.R", "qualified_name": "compare_total"}
+      ],
+      "calls": [
+        {"from_file": "r/measurements.R", "from": "total_scaled", "to_file": "r/measurements.R", "to": "scale_value"},
+        {"from_file": "r/measurements.R", "from": "compare_total", "to_file": "r/measurements.R", "to": "total_scaled"}
+      ]
+    },
+    {
+      "language": "Java",
+      "functions": [
+        {"file": "java/Measurements.java", "qualified_name": "Measurements.scaleValue"},
+        {"file": "java/Measurements.java", "qualified_name": "Measurements.totalScaled"},
+        {"file": "java/Measurements.java", "qualified_name": "Measurements.compareTotal"}
+      ],
+      "calls": [
+        {"from_file": "java/Measurements.java", "from": "Measurements.totalScaled", "to_file": "java/Measurements.java", "to": "Measurements.scaleValue"},
+        {"from_file": "java/Measurements.java", "from": "Measurements.compareTotal", "to_file": "java/Measurements.java", "to": "Measurements.totalScaled"}
+      ]
+    },
+    {
+      "language": "C",
+      "functions": [
+        {"file": "c/measurements.c", "qualified_name": "scale_value"},
+        {"file": "c/measurements.c", "qualified_name": "total_scaled"},
+        {"file": "c/measurements.c", "qualified_name": "compare_total"}
+      ],
+      "calls": [
+        {"from_file": "c/measurements.c", "from": "total_scaled", "to_file": "c/measurements.c", "to": "scale_value"},
+        {"from_file": "c/measurements.c", "from": "compare_total", "to_file": "c/measurements.c", "to": "total_scaled"}
+      ]
+    },
+    {
+      "language": "C++",
+      "functions": [
+        {"file": "cpp/measurements.cpp", "qualified_name": "scale_value"},
+        {"file": "cpp/measurements.cpp", "qualified_name": "total_scaled"},
+        {"file": "cpp/measurements.cpp", "qualified_name": "compare_total"}
+      ],
+      "calls": [
+        {"from_file": "cpp/measurements.cpp", "from": "total_scaled", "to_file": "cpp/measurements.cpp", "to": "scale_value"},
+        {"from_file": "cpp/measurements.cpp", "from": "compare_total", "to_file": "cpp/measurements.cpp", "to": "total_scaled"}
+      ]
+    },
+    {
+      "language": "Rust",
+      "functions": [
+        {"file": "rust/measurements.rs", "qualified_name": "scale_value"},
+        {"file": "rust/measurements.rs", "qualified_name": "total_scaled"},
+        {"file": "rust/measurements.rs", "qualified_name": "compare_total"}
+      ],
+      "calls": [
+        {"from_file": "rust/measurements.rs", "from": "total_scaled", "to_file": "rust/measurements.rs", "to": "scale_value"},
+        {"from_file": "rust/measurements.rs", "from": "compare_total", "to_file": "rust/measurements.rs", "to": "total_scaled"}
+      ]
+    },
+    {
+      "language": "JavaScript",
+      "functions": [
+        {"file": "javascript/measurements.js", "qualified_name": "scaleValue"},
+        {"file": "javascript/measurements.js", "qualified_name": "totalScaled"},
+        {"file": "javascript/measurements.js", "qualified_name": "compareTotal"}
+      ],
+      "calls": [
+        {"from_file": "javascript/measurements.js", "from": "totalScaled", "to_file": "javascript/measurements.js", "to": "scaleValue"},
+        {"from_file": "javascript/measurements.js", "from": "compareTotal", "to_file": "javascript/measurements.js", "to": "totalScaled"}
+      ]
+    },
+    {
+      "language": "TypeScript",
+      "functions": [
+        {"file": "typescript/measurements.ts", "qualified_name": "scaleValue"},
+        {"file": "typescript/measurements.ts", "qualified_name": "totalScaled"},
+        {"file": "typescript/measurements.ts", "qualified_name": "compareTotal"}
+      ],
+      "calls": [
+        {"from_file": "typescript/measurements.ts", "from": "totalScaled", "to_file": "typescript/measurements.ts", "to": "scaleValue"},
+        {"from_file": "typescript/measurements.ts", "from": "compareTotal", "to_file": "typescript/measurements.ts", "to": "totalScaled"}
+      ]
+    },
+    {
+      "language": "Go",
+      "functions": [
+        {"file": "go/measurements.go", "qualified_name": "measurements.ScaleValue"},
+        {"file": "go/measurements.go", "qualified_name": "measurements.TotalScaled"},
+        {"file": "go/measurements.go", "qualified_name": "measurements.CompareTotal"}
+      ],
+      "calls": [
+        {"from_file": "go/measurements.go", "from": "measurements.TotalScaled", "to_file": "go/measurements.go", "to": "measurements.ScaleValue"},
+        {"from_file": "go/measurements.go", "from": "measurements.CompareTotal", "to_file": "go/measurements.go", "to": "measurements.TotalScaled"}
+      ]
+    }
+  ]
+}

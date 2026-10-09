@@ -1,0 +1,12 @@
+.venv/
+.vibereading/
+__pycache__/
+*.pyc
+work/
+outputs/
+# Keep local credentials and machine-specific files out of source control.
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
